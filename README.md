@@ -1,6 +1,6 @@
 # Web Console
 
-Web Console is a java tool that allows you to run a task from a web browser and see the output in real time. It uses Vert.x framework to create a web server and a websocket handler, and redirects the standard output to the web console. 
+Web Console is a super simple java tool that allows you to trigger a task (running on a server) from a web browser and see the output in real time. It uses Vert.x framework to create a web server and a websocket handler, and redirects the standard output to the web console. 
 
 ## How to use
 
