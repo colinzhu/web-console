@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Web Console</title>
+
+    <style>
+        body {
+            font-family:  monospace;
+        }
+    </style>
+    <script>
+      const socket = new WebSocket("ws://" + location.host);
+      socket.onmessage = event => {
+        const message = document.createElement("div");
+        message.textContent = event.data;
+        document.getElementById("messages").appendChild(message);
+      };
+      function sendMessage(event) {
+        event.preventDefault();
+        const input = document.getElementById("messageInput");
+        socket.send(input.value);
+        input.value = "";
+      };
+      function start(event) {
+        event.preventDefault();
+        const input = document.getElementById("messageInput");
+        socket.send("startParams=" + input.value);
+        input.value = "";
+      };
+      function clearMessages() {
+        document.getElementById("messages").innerHTML = "";
+      }
+    </script>
+</head>
+<body>
+<form onsubmit="sendMessage(event)">
+    <input type="text" id="messageInput">
+    <button type="submit">Submit</button>
+    <button onclick="javascript:start(event);return false;">Start</button>
+    <button onclick="javascript:clearMessages();return false;">Clear</button>
+</form>
+<div id="messages"></div>
+</body>
+</html>
