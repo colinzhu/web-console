@@ -29,7 +29,7 @@ public class WebConsole extends AbstractVerticle {
 
     public static synchronized void start(Consumer<String[]> task, int port) {
         if (instance == null) { // only deploy once
-            VertxOptions vertxOptions = new VertxOptions().setMaxWorkerExecuteTime(TimeUnit.MINUTES.toNanos(10L));
+            VertxOptions vertxOptions = new VertxOptions().setMaxWorkerExecuteTime(TimeUnit.MINUTES.toNanos(100L));
             instance = new WebConsole(task, port);
             Vertx.vertx(vertxOptions).deployVerticle(instance);
         }

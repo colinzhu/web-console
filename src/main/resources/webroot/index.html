@@ -19,12 +19,6 @@
       function sendMessage(event) {
         event.preventDefault();
         const input = document.getElementById("messageInput");
-        socket.send(input.value);
-        input.value = "";
-      };
-      function start(event) {
-        event.preventDefault();
-        const input = document.getElementById("messageInput");
         socket.send("startParams=" + input.value);
         input.value = "";
       };
@@ -36,8 +30,7 @@
 <body>
 <form onsubmit="sendMessage(event)">
     <input type="text" id="messageInput">
-<!--    <button type="submit">Submit</button>-->
-    <button onclick="javascript:start(event);return false;">Start</button>
+    <button type="submit">Start</button>
     <button onclick="javascript:clearMessages();return false;">Clear</button>
 </form>
 <div id="messages"></div>
