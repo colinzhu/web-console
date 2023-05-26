@@ -34,8 +34,11 @@ public class HelloWorldTask implements Consumer<String[]> {
 ```
 
 Then, in your App(main) class, you can start the web console with this task:
+
 ```java
 package colinzhu.webconsole;
+
+import io.github.colinzhu.webconsole.WebConsole;
 
 public class App {
 

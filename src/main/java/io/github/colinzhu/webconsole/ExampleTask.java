@@ -1,4 +1,4 @@
-package colinzhu.webconsole;
+package io.github.colinzhu.webconsole;
 
 import lombok.extern.slf4j.Slf4j;
 

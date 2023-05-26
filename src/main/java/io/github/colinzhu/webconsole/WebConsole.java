@@ -1,4 +1,4 @@
-package colinzhu.webconsole;
+package io.github.colinzhu.webconsole;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;

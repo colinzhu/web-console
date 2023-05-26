@@ -1,4 +1,4 @@
-package colinzhu.webconsole;
+package io.github.colinzhu.webconsole;
 
 public class App {
     public static void main(String[] args) {
