@@ -4,13 +4,11 @@ Web Console is a super simple java tool that allows you to trigger a task (runni
 
 ## How to use
 
-1. Clone this repository.
-2. Open the project in your favorite IDE.
-3. Write a Task which implements Consumer<String[]>
-4. Update `App` to use that Task
-5. Run the `App` class to start the server.
-6. Open a web browser and navigate to `http://localhost:8082`. You should see a web console with a welcome message and a prompt to enter the parameters for the task.
-7. Enter the parameters for the task separated by spaces and click "Start". The task will start running and you will see the output in the web console.
+1. Add the dependency `<groupId>io.github.colinzhu</groupId><artifactId>web-console</artifactId><version>0.1.0</version>` into your project
+2. Invoke `WebConsole.start(...)` with your task (implements Consumer<String[]>) and port number
+3. Run your app, which will start a web server e.g. `http://localhost:8082` 
+4. Open a web browser and navigate to `http://localhost:8082`. You should see a web console with a welcome message and a prompt to enter the parameters for the task.
+5. Enter the parameters for the task separated by spaces and click "Start". The task will start running and you will see the output in the web console.
 
 ## Example
 
@@ -35,12 +33,9 @@ public class HelloWorldTask {
 Then, in your App(main) class, you can start the web console with this task:
 
 ```java
-package colinzhu.webconsole;
-
 import io.github.colinzhu.webconsole.WebConsole;
 
 public class App {
-
     public static void main(String[] args) {
         WebConsole.start(HelloWorldTask::main, 8082); // start the web console with HelloWorldTask and port 8082
     }
@@ -61,19 +56,15 @@ Hello, world!
 
 ```
 
-
+## Example with SSL
 To start the web console with SSL:
 
 ```java
-package colinzhu.webconsole;
-
 import io.github.colinzhu.webconsole.WebConsole;
 import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.net.PemKeyCertOptions;
 
-
 public class App {
-
     public static void main(String[] args) {
         // Example to start web console with SSL e.g. https://example.xyz:8082
         HttpServerOptions options = new HttpServerOptions()
