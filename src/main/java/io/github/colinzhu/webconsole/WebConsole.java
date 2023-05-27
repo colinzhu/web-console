@@ -48,7 +48,7 @@ public class WebConsole extends AbstractVerticle {
         server.webSocketHandler(this::onWebSocketConnected);
 
         Router router = Router.router(vertx);
-        router.route().handler(StaticHandler.create("webroot"));
+        router.route().handler(StaticHandler.create("web"));
         server.requestHandler(router);
 
         return server.listen(port);
