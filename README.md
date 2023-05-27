@@ -1,26 +1,14 @@
 # Web Console
 
-Web Console is a super simple java tool that allows you to trigger a task (running on a server) from a web browser and see the output in real time. It uses Vert.x framework to create a web server and a websocket handler, and redirects the standard output to the web console. 
+Web Console is a super simple java tool that allows you to: 
+1. from a web browser, trigger a task to run  
+2. and from the web browser, see the output in real time
 
-## How to use
-
-1. Add the dependency `<groupId>io.github.colinzhu</groupId><artifactId>web-console</artifactId><version>0.1.0</version>` into your project
-2. Invoke `WebConsole.start(...)` with your task (implements Consumer<String[]>) and port number
-3. Run your app, which will start a web server e.g. `http://localhost:8082` 
-4. Open a web browser and navigate to `http://localhost:8082`. You should see a web console with a welcome message and a prompt to enter the parameters for the task.
-5. Enter the parameters for the task separated by spaces and click "Start". The task will start running and you will see the output in the web console.
-
-## Example
-
-Suppose you have a task that prints “Hello, world!” n times, where n is a parameter. You can create a class that implements Consumer<String[]> and pass it to the WebConsole.start() method. For example:
+## Usage with example
+Suppose you have a task that prints “Hello, world!” n times, where n is a parameter. You want to trigger it to run from a web browser and see the output in real time.
 
 ```java
-package colinzhu.webconsole;
-
-import java.util.function.Consumer;
-
-public class HelloWorldTask {
-
+public class HelloWorld {
     public static void main(String[] args) {
         int n = Integer.parseInt(args[0]); // get the parameter from args
         for (int i = 0; i < n; i++) {
@@ -29,20 +17,26 @@ public class HelloWorldTask {
     }
 }
 ```
-
-Then, in your App(main) class, you can start the web console with this task:
+Step 1: Add the dependency into your project:
+   ```xml
+   <dependency>
+       <groupId>io.github.colinzhu</groupId>
+       <artifactId>web-console</artifactId>
+       <version>0.1.0</version>
+   </dependency>
+   ```
+Step 2: write a method which wraps the original task using `WebConsole.start(...)` like below.
 
 ```java
 import io.github.colinzhu.webconsole.WebConsole;
 
 public class App {
     public static void main(String[] args) {
-        WebConsole.start(HelloWorldTask::main, 8082); // start the web console with HelloWorldTask and port 8082
+        WebConsole.start(HelloWorld::main, 8082); // start the web console with HelloWorldTask and port 8082
     }
 }
 ```
-
-Now, if you go to http://localhost:8082 and enter 5 as the parameter, you will see this output:
+Step 3: run your App.main(), and go to http://localhost:8082 and enter 5 as the parameter and click the "Start" button, you will see this output:
 
 ```text
 Welcome to the web console!
@@ -53,7 +47,6 @@ Hello, world!
 Hello, world!
 Hello, world!
 Hello, world!
-
 ```
 
 ## Example with SSL
@@ -76,3 +69,8 @@ public class App {
     }
 }
 ```
+
+## Customize the UI page
+Web Console comes with a default UI page
+
+You can customize UI page by creating your own index.html and put it into classpath as `/web/index.html`, for example create a file `resources/web/index.html` in your project
