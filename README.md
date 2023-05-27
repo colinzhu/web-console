@@ -21,10 +21,9 @@ package colinzhu.webconsole;
 
 import java.util.function.Consumer;
 
-public class HelloWorldTask implements Consumer<String[]> {
+public class HelloWorldTask {
 
-    @Override
-    public void accept(String[] args) {
+    public static void main(String[] args) {
         int n = Integer.parseInt(args[0]); // get the parameter from args
         for (int i = 0; i < n; i++) {
             System.out.println("Hello, world!"); // print to standard output
@@ -43,7 +42,7 @@ import io.github.colinzhu.webconsole.WebConsole;
 public class App {
 
     public static void main(String[] args) {
-        WebConsole.start(new HelloWorldTask(), 8082); // start the web console with HelloWorldTask and port 8082
+        WebConsole.start(HelloWorldTask::main, 8082); // start the web console with HelloWorldTask and port 8082
     }
 }
 ```
@@ -60,4 +59,29 @@ Hello, world!
 Hello, world!
 Hello, world!
 
+```
+
+
+To start the web console with SSL:
+
+```java
+package colinzhu.webconsole;
+
+import io.github.colinzhu.webconsole.WebConsole;
+import io.vertx.core.http.HttpServerOptions;
+import io.vertx.core.net.PemKeyCertOptions;
+
+
+public class App {
+
+    public static void main(String[] args) {
+        // Example to start web console with SSL e.g. https://example.xyz:8082
+        HttpServerOptions options = new HttpServerOptions()
+                .setPort(8082)
+                .setSsl(true)
+                .setHost("example.xyz")
+                .setKeyCertOptions(new PemKeyCertOptions().setCertPath("chain.pem").setKeyPath("private_key.pem"));
+        WebConsole.start(HelloWorldTask::main, options);
+    }
+}
 ```

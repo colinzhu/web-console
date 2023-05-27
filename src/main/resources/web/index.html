@@ -10,7 +10,8 @@
         }
     </style>
     <script>
-      const socket = new WebSocket("ws://" + location.host);
+      const protocol = location.protocol == "https:" ? "wss:" : "ws:";
+      const socket = new WebSocket(protocol + "//" + location.host);
       socket.onmessage = event => {
         const message = document.createElement("div");
         message.textContent = event.data;

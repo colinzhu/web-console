@@ -5,6 +5,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.StaticHandler;
@@ -25,33 +26,40 @@ public class WebConsole extends AbstractVerticle {
 
     private static WebConsole instance;
 
-    private final int port;
-
+    /**
+     * Start the web console server with given port number without SSL
+     * @param task the task to be executed
+     * @param port web server port number
+     */
     public static synchronized void start(Consumer<String[]> task, int port) {
+        start(task, new HttpServerOptions().setPort(port));
+    }
+    /**
+     * Start the web console server
+     * @param task the task to be executed
+     * @param options <a href="https://vertx.io/docs/apidocs/io/vertx/core/http/HttpServerOptions.html">HttpServerOptions</a> to start web server
+     */
+    public static synchronized void start(Consumer<String[]> task, HttpServerOptions options) {
         if (instance == null) { // only deploy once
-            VertxOptions vertxOptions = new VertxOptions().setMaxWorkerExecuteTime(TimeUnit.MINUTES.toNanos(100L));
-            instance = new WebConsole(task, port);
-            Vertx.vertx(vertxOptions).deployVerticle(instance);
+            VertxOptions vertxOptions = new VertxOptions().setMaxWorkerExecuteTime(TimeUnit.MINUTES.toNanos(Long.MAX_VALUE)); //to prevent vert.x warning message
+            instance = new WebConsole(task);
+            Vertx.vertx(vertxOptions).deployVerticle(instance) // deploy the WebConsole verticle
+                    .compose(deployed -> instance.startWebServer(options)).onSuccess(webServer -> { // start the web server
+                        log.info("Web console server started, url:" + WebConsole.getServerUrl(options));
+                        instance.redirectStdOutToWeb();
+                    }).onFailure(err -> log.error("Failed to start the web console server", err));
         }
     }
 
-    @Override
-    public void start() {
-        startWebServer().onSuccess(httpServer -> {
-            log.info("server started at " + port);
-            redirectStdOutToWeb();
-        }).onFailure(err -> log.error("failed to start server", err));
-    }
-
-    private Future<HttpServer> startWebServer() {
-        HttpServer server = vertx.createHttpServer();
+    private Future<HttpServer> startWebServer(HttpServerOptions options) {
+        HttpServer server = vertx.createHttpServer(options);
         server.webSocketHandler(this::onWebSocketConnected);
 
         Router router = Router.router(vertx);
         router.route().handler(StaticHandler.create("web"));
         server.requestHandler(router);
 
-        return server.listen(port);
+        return server.listen();
     }
 
     private void redirectStdOutToWeb() {
@@ -109,5 +117,11 @@ public class WebConsole extends AbstractVerticle {
                 isTaskRunning = false;
             });
         }
+    }
+
+    private static String getServerUrl(HttpServerOptions options) {
+        String protocol = options.isSsl() ? "https://" : "http://";
+        String host = options.getHost().equals("0.0.0.0") ? "127.0.0.1" : options.getHost();
+        return protocol + host + ":" + options.getPort();
     }
 }
