@@ -21,28 +21,41 @@ import java.util.function.Consumer;
 @Slf4j
 @RequiredArgsConstructor
 public class WebConsole extends AbstractVerticle {
+    private Runnable preTask;
     private final Consumer<String[]> task;
     private boolean isTaskRunning = false;
 
     private static WebConsole instance;
 
     /**
-     * Start the web console server with given port number without SSL
-     * @param task the task to be executed
+     * Start the web console server with preTask, given port number
+     * @param preTask the task to be auto executed before the main task
+     * @param task the main task to be executed
+     * @param port web server port number
+     */
+    public static synchronized void start(Runnable preTask, Consumer<String[]> task, int port) {
+        start(preTask, task, new HttpServerOptions().setPort(port));
+    }
+
+    /**
+     * Start the web console server with given port number
+     * @param task the main task to be executed
      * @param port web server port number
      */
     public static synchronized void start(Consumer<String[]> task, int port) {
-        start(task, new HttpServerOptions().setPort(port));
+        start(null, task, new HttpServerOptions().setPort(port));
     }
     /**
      * Start the web console server
-     * @param task the task to be executed
+     * @param preTask the task to be auto executed before the main task
+     * @param task the main task to be executed
      * @param options <a href="https://vertx.io/docs/apidocs/io/vertx/core/http/HttpServerOptions.html">HttpServerOptions</a> to start web server
      */
-    public static synchronized void start(Consumer<String[]> task, HttpServerOptions options) {
+    public static synchronized void start(Runnable preTask, Consumer<String[]> task, HttpServerOptions options) {
         if (instance == null) { // only deploy once
             VertxOptions vertxOptions = new VertxOptions().setMaxWorkerExecuteTime(TimeUnit.MINUTES.toNanos(Long.MAX_VALUE)); //to prevent vert.x warning message
             instance = new WebConsole(task);
+            instance.preTask = preTask;
             Vertx.vertx(vertxOptions).deployVerticle(instance) // deploy the WebConsole verticle
                     .compose(deployed -> instance.startWebServer(options)).onSuccess(webServer -> { // start the web server
                         log.info("Web console server started, url:" + WebConsole.getServerUrl(options));
@@ -91,6 +104,9 @@ public class WebConsole extends AbstractVerticle {
             webSocket.writeTextMessage((String) message.body()); // redirect the message to websocket (web)
         });
         webSocket.textMessageHandler(this::onMessageReceived);
+        if (preTask != null) {
+            preTask.run();
+        }
     }
 
     private void onMessageReceived(String msg) {
