@@ -22,7 +22,7 @@ Step 1: Add the dependency into your project:
    <dependency>
        <groupId>io.github.colinzhu</groupId>
        <artifactId>web-console</artifactId>
-       <version>0.1.0</version>
+       <version>0.1.2</version>
    </dependency>
    ```
 Step 2: write a method which wraps the original task using `WebConsole.start(...)` like below.
