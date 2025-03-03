@@ -9,15 +9,17 @@ import java.util.List;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-@RequiredArgsConstructor
-public class SysOutToEventBus {
+import static lombok.AccessLevel.PRIVATE;
+
+@RequiredArgsConstructor(access = PRIVATE)
+class SysOutToEventBus {
     private final Vertx vertx;
     private final BlockingQueue<String> messageQueue = new LinkedBlockingQueue<>();
     private static SysOutToEventBus instance;
 
     static final String EVENT_CONSOLE_MSG_CREATED = "console_messages_created";
 
-    public static synchronized void setup(Vertx vertx) {
+    static synchronized void setup(Vertx vertx) {
         if (instance == null) {
             instance = new SysOutToEventBus(vertx);
             instance.sysOutToMessageQueue();

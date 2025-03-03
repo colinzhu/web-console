@@ -7,14 +7,15 @@ import io.vertx.core.http.HttpServerOptions;
 import io.vertx.core.http.ServerWebSocket;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.StaticHandler;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import static io.github.colinzhu.webconsole.SysOutToEventBus.EVENT_CONSOLE_MSG_CREATED;
 
 @Slf4j
-@RequiredArgsConstructor
-public class WebVerticle extends AbstractVerticle {
+@RequiredArgsConstructor(access = AccessLevel.PACKAGE)
+class WebVerticle extends AbstractVerticle {
     private boolean isTaskRunning = false;
     private final HttpServerOptions options;
 
